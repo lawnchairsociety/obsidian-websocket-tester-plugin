@@ -29,23 +29,36 @@
 }
 
 .ws-connection-dropdown {
-    min-width: 0;
-    flex-shrink: 1;
+    min-width: 180px;
     padding: 6px 8px;
 }
 
 .ws-url-input {
     flex: 1;
-    min-width: 0;
+    min-width: 250px;
     padding: 6px 8px;
     font-family: monospace;
     font-size: 13px;
 }
 
 .ws-connect-btn {
-    flex-shrink: 0;
+    min-width: 100px;
     padding: 6px 16px;
-    white-space: nowrap;
+}
+
+/* Mobile responsive layout */
+@media (max-width: 600px) {
+    .ws-connection-row {
+        flex-direction: column;
+        align-items: stretch;
+    }
+
+    .ws-connection-dropdown,
+    .ws-url-input,
+    .ws-connect-btn {
+        min-width: 0;
+        width: 100%;
+    }
 }
 
 .ws-save-btn {
