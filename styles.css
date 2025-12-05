@@ -29,21 +29,23 @@
 }
 
 .ws-connection-dropdown {
-    min-width: 180px;
+    min-width: 0;
+    flex-shrink: 1;
     padding: 6px 8px;
 }
 
 .ws-url-input {
     flex: 1;
-    min-width: 250px;
+    min-width: 0;
     padding: 6px 8px;
     font-family: monospace;
     font-size: 13px;
 }
 
 .ws-connect-btn {
-    min-width: 100px;
+    flex-shrink: 0;
     padding: 6px 16px;
+    white-space: nowrap;
 }
 
 .ws-save-btn {
