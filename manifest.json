@@ -1,7 +1,7 @@
 {
 	"id": "websocket-tester-plugin",
 	"name": "WebSocket Tester",
-	"version": "0.1.0",
+	"version": "0.1.3",
 	"minAppVersion": "1.10.0",
 	"description": "A WebSocket testing and debugging tool for Obsidian. Connect to WebSocket servers, send messages, and view real-time responses.",
 	"author": "Ben Stoker",
