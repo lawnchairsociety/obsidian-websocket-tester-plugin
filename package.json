@@ -1,7 +1,7 @@
 {
-	"name": "websocket-tester-plugin",
+	"name": "websocket-tester",
 	"version": "1.0.0",
-	"description": "A WebSocket testing and debugging plugin for Obsidian",
+	"description": "A WebSocket testing and debugging tool. Connect to WebSocket servers, send messages, and view real-time responses.",
 	"main": "main.js",
 	"scripts": {
 		"dev": "node esbuild.config.mjs",
