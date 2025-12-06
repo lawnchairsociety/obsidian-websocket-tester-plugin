@@ -26,25 +26,6 @@ export class MessageComposer {
         this.sendBtn.addEventListener('click', () => {
             this.handleSend();
         });
-
-        // Keyboard shortcuts
-        this.textarea.addEventListener('keydown', (e) => {
-            // Ctrl/Cmd + Enter to send
-            if ((e.ctrlKey || e.metaKey) && e.key === 'Enter') {
-                e.preventDefault();
-                this.handleSend();
-                return;
-            }
-
-            // Arrow up/down for history (only when at start/end of input)
-            if (e.key === 'ArrowUp' && this.isAtStart()) {
-                e.preventDefault();
-                this.navigateHistory(-1);
-            } else if (e.key === 'ArrowDown' && this.isAtEnd()) {
-                e.preventDefault();
-                this.navigateHistory(1);
-            }
-        });
     }
 
     private isAtStart(): boolean {

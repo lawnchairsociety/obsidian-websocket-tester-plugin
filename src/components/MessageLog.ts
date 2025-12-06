@@ -41,7 +41,7 @@ export class MessageLog {
 
     private updateScrollButton(): void {
         if (this.scrollToBottomBtn) {
-            this.scrollToBottomBtn.style.display = this.autoScroll ? 'none' : 'block';
+            this.scrollToBottomBtn.toggleClass('ws-hidden', this.autoScroll);
         }
     }
 

@@ -14,26 +14,26 @@ export class WebSocketTesterSettingsTab extends PluginSettingTab {
         const { containerEl } = this;
         containerEl.empty();
 
-        containerEl.createEl('h2', { text: 'WebSocket Tester Settings' });
+        ;
 
         // Saved Connections Section
-        containerEl.createEl('h3', { text: 'Saved Connections' });
+        new Setting(containerEl).setName('Saved connections').setHeading();
 
         const connectionsContainer = containerEl.createDiv('ws-connections-list');
         this.renderConnectionsList(connectionsContainer);
 
         new Setting(containerEl)
             .setName('Add new connection')
-            .setDesc('Save a WebSocket endpoint for quick access')
+            .setDesc('Save a websocket endpoint for quick access')
             .addButton(button => button
-                .setButtonText('Add Connection')
+                .setButtonText('Add connection')
                 .setCta()
                 .onClick(() => {
                     this.showAddConnectionModal();
                 }));
 
         // Connection Settings
-        containerEl.createEl('h3', { text: 'Connection Settings' });
+        new Setting(containerEl).setName('Connection').setHeading();
 
         new Setting(containerEl)
             .setName('Auto-reconnect')
@@ -74,7 +74,7 @@ export class WebSocketTesterSettingsTab extends PluginSettingTab {
                 }));
 
         // Display Settings
-        containerEl.createEl('h3', { text: 'Display Settings' });
+        new Setting(containerEl).setName('Display').setHeading();
 
         new Setting(containerEl)
             .setName('Show timestamps')
@@ -90,7 +90,7 @@ export class WebSocketTesterSettingsTab extends PluginSettingTab {
             .setName('Timestamp format')
             .setDesc('Choose 12-hour or 24-hour time format')
             .addDropdown(dropdown => dropdown
-                .addOption('12h', '12-hour (AM/PM)')
+                .addOption('12h', '12-hour')
                 .addOption('24h', '24-hour')
                 .setValue(this.plugin.settings.timestampFormat)
                 .onChange(async (value: '12h' | '24h') => {
@@ -102,7 +102,7 @@ export class WebSocketTesterSettingsTab extends PluginSettingTab {
             .setName('Font family')
             .setDesc('Font family for the message log')
             .addText(text => text
-                .setPlaceholder('monospace')
+                .setPlaceholder('Monospace')
                 .setValue(this.plugin.settings.fontFamily)
                 .onChange(async (value) => {
                     this.plugin.settings.fontFamily = value || 'monospace';
@@ -164,32 +164,38 @@ export class WebSocketTesterSettingsTab extends PluginSettingTab {
             });
 
             const deleteBtn = actionsEl.createEl('button', { text: 'Delete', cls: 'mod-warning' });
-            deleteBtn.addEventListener('click', async () => {
+            deleteBtn.addEventListener('click', () => {
                 this.plugin.settings.savedConnections = this.plugin.settings.savedConnections.filter(
                     c => c.id !== conn.id
                 );
-                await this.plugin.saveSettings();
+                void this.plugin.saveSettings().catch((e) => {
+                    console.error('Failed to save settings:', e);
+                });
                 this.renderConnectionsList(container);
             });
         }
     }
 
     private showAddConnectionModal(): void {
-        const modal = new ConnectionModal(this.app, null, async (conn) => {
+        const modal = new ConnectionModal(this.app, null, (conn) => {
             conn.id = this.generateId();
             this.plugin.settings.savedConnections.push(conn);
-            await this.plugin.saveSettings();
+            void this.plugin.saveSettings().catch((e) => {
+                console.error('Failed to save settings:', e);
+            });
             this.display();
         });
         modal.open();
     }
 
     private showEditConnectionModal(conn: SavedConnection): void {
-        const modal = new ConnectionModal(this.app, conn, async (updated) => {
+        const modal = new ConnectionModal(this.app, conn, (updated) => {
             const index = this.plugin.settings.savedConnections.findIndex(c => c.id === conn.id);
             if (index !== -1) {
                 this.plugin.settings.savedConnections[index] = { ...updated, id: conn.id };
-                await this.plugin.saveSettings();
+                void this.plugin.saveSettings().catch((e) => {
+                    console.error('Failed to save settings:', e);
+                });
                 this.display();
             }
         });
@@ -197,7 +203,7 @@ export class WebSocketTesterSettingsTab extends PluginSettingTab {
     }
 
     private generateId(): string {
-        return Date.now().toString(36) + Math.random().toString(36).substr(2);
+        return Date.now().toString(36) + Math.random().toString(36).substring(2);
     }
 }
 
@@ -217,7 +223,7 @@ class ConnectionModal extends Modal {
         const { contentEl } = this;
         contentEl.empty();
 
-        contentEl.createEl('h2', { text: this.connection ? 'Edit Connection' : 'Add Connection' });
+        new Setting(contentEl).setName(this.connection ? 'Edit Connection' : 'Add Connection').setHeading();
 
         const form = contentEl.createEl('div', { cls: 'ws-connection-form' });
 
@@ -225,14 +231,14 @@ class ConnectionModal extends Modal {
         const nameGroup = form.createDiv('ws-form-group');
         nameGroup.createEl('label', { text: 'Name' });
         this.nameInput = nameGroup.createEl('input', { type: 'text' });
-        this.nameInput.placeholder = 'My WebSocket Server';
+        this.nameInput.placeholder = 'My websocket server';
         if (this.connection) {
             this.nameInput.value = this.connection.name;
         }
 
         // URL field
         const urlGroup = form.createDiv('ws-form-group');
-        urlGroup.createEl('label', { text: 'WebSocket URL' });
+        urlGroup.createEl('label', { text: 'Websocket address' });
         this.urlInput = urlGroup.createEl('input', { type: 'text' });
         this.urlInput.placeholder = 'wss://example.com/socket';
         if (this.connection) {

@@ -1,24 +1,34 @@
 {
 	"name": "websocket-tester",
-	"version": "1.0.0",
+	"version": "1.0.1",
 	"description": "A WebSocket testing and debugging tool. Connect to WebSocket servers, send messages, and view real-time responses.",
 	"main": "main.js",
 	"scripts": {
 		"dev": "node esbuild.config.mjs",
 		"build": "tsc -noEmit -skipLibCheck && node esbuild.config.mjs production",
+		"lint": "eslint .",
 		"version": "node version-bump.mjs && git add manifest.json versions.json"
 	},
-	"keywords": ["obsidian", "websocket", "testing", "debugging"],
+	"keywords": [
+		"obsidian",
+		"websocket",
+		"testing",
+		"debugging"
+	],
 	"author": "Ben Stoker",
 	"license": "MIT",
 	"devDependencies": {
+		"@eslint/js": "^9.39.1",
+		"@eslint/json": "^0.14.0",
 		"@types/node": "^16.11.6",
-		"@typescript-eslint/eslint-plugin": "5.29.0",
-		"@typescript-eslint/parser": "5.29.0",
-		"builtin-modules": "3.3.0",
+		"@typescript-eslint/eslint-plugin": "^8.48.1",
+		"@typescript-eslint/parser": "^8.48.1",
 		"esbuild": "0.17.3",
+		"eslint": "^9.39.1",
+		"eslint-plugin-obsidianmd": "^0.1.9",
 		"obsidian": "latest",
 		"tslib": "2.4.0",
-		"typescript": "4.7.4"
+		"typescript": "^5.9.3",
+		"typescript-eslint": "^8.48.1"
 	}
 }

@@ -18,8 +18,10 @@ export default class WebSocketTesterPlugin extends Plugin {
         );
 
         // Add ribbon icon
-        this.addRibbonIcon('plug', 'Open WebSocket Tester', () => {
-            this.activateView();
+        this.addRibbonIcon('plug', 'Open websocket tester', () => {
+            void this.activateView().catch((e) => {
+                console.error('Failed to activate view:', e);
+            });
         });
 
         // Add status bar item
@@ -28,17 +30,19 @@ export default class WebSocketTesterPlugin extends Plugin {
 
         // Add command to open tester
         this.addCommand({
-            id: 'open-websocket-tester',
-            name: 'Open WebSocket Tester',
+            id: 'open-tester',
+            name: 'Open tester',
             callback: () => {
-                this.activateView();
+                void this.activateView().catch((e) => {
+                    console.error('Failed to activate view:', e);
+                });
             }
         });
 
         // Add command to disconnect
         this.addCommand({
             id: 'websocket-disconnect',
-            name: 'Disconnect WebSocket',
+            name: 'Disconnect websocket',
             callback: () => {
                 const view = this.getView();
                 if (view) {
@@ -50,7 +54,7 @@ export default class WebSocketTesterPlugin extends Plugin {
         // Add command to clear log
         this.addCommand({
             id: 'websocket-clear-log',
-            name: 'Clear WebSocket message log',
+            name: 'Clear websocket message log',
             callback: () => {
                 const view = this.getView();
                 if (view) {
@@ -61,10 +65,6 @@ export default class WebSocketTesterPlugin extends Plugin {
 
         // Add settings tab
         this.addSettingTab(new WebSocketTesterSettingsTab(this.app, this));
-    }
-
-    onunload(): void {
-        this.app.workspace.detachLeavesOfType(VIEW_TYPE_WEBSOCKET_TESTER);
     }
 
     async loadSettings(): Promise<void> {
@@ -93,7 +93,7 @@ export default class WebSocketTesterPlugin extends Plugin {
             });
         }
 
-        workspace.revealLeaf(leaf);
+        await workspace.revealLeaf(leaf);
     }
 
     updateStatusBar(status: ConnectionStatus): void {

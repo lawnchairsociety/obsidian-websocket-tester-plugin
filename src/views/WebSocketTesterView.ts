@@ -45,7 +45,9 @@ export class WebSocketTesterView extends ItemView {
                     const selectedId = this.connectionDropdown.value;
                     if (selectedId) {
                         this.plugin.settings.lastConnectionId = selectedId;
-                        this.plugin.saveSettings();
+                        void this.plugin.saveSettings().catch((e) => {
+                            console.error('Failed to save settings:', e);
+                        });
                     }
                 },
                 onClose: (code, reason) => {
@@ -102,7 +104,7 @@ export class WebSocketTesterView extends ItemView {
     }
 
     getDisplayText(): string {
-        return 'WebSocket Tester';
+        return 'Websocket tester';
     }
 
     getIcon(): string {
@@ -110,6 +112,7 @@ export class WebSocketTesterView extends ItemView {
     }
 
     async onOpen(): Promise<void> {
+        await super.onOpen();
         const container = this.contentEl;
         container.empty();
         container.addClass('ws-tester-container');
@@ -120,6 +123,7 @@ export class WebSocketTesterView extends ItemView {
     }
 
     async onClose(): Promise<void> {
+        await super.onClose();
         this.webSocket.destroy();
     }
 
@@ -162,10 +166,9 @@ export class WebSocketTesterView extends ItemView {
         this.statusEl.setText('Disconnected');
 
         this.saveBtn = statusRow.createEl('button', {
-            text: 'Save Connection',
-            cls: 'ws-save-btn'
+            text: 'Save connection',
+            cls: 'ws-save-btn ws-hidden'
         });
-        this.saveBtn.style.display = 'none';
         this.saveBtn.addEventListener('click', () => {
             this.handleSaveConnection();
         });
@@ -202,7 +205,7 @@ export class WebSocketTesterView extends ItemView {
 
         // Scroll to bottom button
         const scrollBtn = logWrapper.createEl('button', {
-            text: '↓ Scroll to bottom',
+            text: '↓ scroll to bottom',
             cls: 'ws-scroll-btn'
         });
         this.messageLog.setScrollButton(scrollBtn);
@@ -211,7 +214,7 @@ export class WebSocketTesterView extends ItemView {
         const composerPanel = this.contentEl.createDiv('ws-composer-panel');
 
         const composerLabel = composerPanel.createDiv('ws-composer-label');
-        composerLabel.setText('Message (Ctrl+Enter to send)');
+        composerLabel.setText('Message');
 
         const composerRow = composerPanel.createDiv('ws-composer-row');
 
@@ -236,7 +239,7 @@ export class WebSocketTesterView extends ItemView {
         this.connectionDropdown.empty();
 
         this.connectionDropdown.createEl('option', {
-            text: '-- Saved Connections --',
+            text: 'Select a connection',
             value: ''
         });
 
@@ -294,7 +297,7 @@ export class WebSocketTesterView extends ItemView {
         // Show save button if connected to unsaved URL
         const currentUrl = this.urlInput.value;
         const isSaved = this.plugin.settings.savedConnections.some(c => c.url === currentUrl);
-        this.saveBtn.style.display = (status === 'connected' && !isSaved) ? 'block' : 'none';
+        this.saveBtn.toggleClass('ws-hidden', !(status === 'connected' && !isSaved));
 
         // Update status bar
         this.plugin.updateStatusBar(status);
@@ -357,10 +360,12 @@ export class WebSocketTesterView extends ItemView {
 
             this.plugin.settings.savedConnections.push(newConnection);
             this.plugin.settings.lastConnectionId = newConnection.id;
-            this.plugin.saveSettings();
+            void this.plugin.saveSettings().catch((e) => {
+                console.error('Failed to save settings:', e);
+            });
 
             this.updateConnectionDropdown();
-            this.saveBtn.style.display = 'none';
+            this.saveBtn.addClass('ws-hidden');
 
             this.messageLog.addSystemMessage(`Connection "${name}" saved`, 'success');
         });
@@ -373,7 +378,7 @@ export class WebSocketTesterView extends ItemView {
     }
 
     private generateId(): string {
-        return Date.now().toString(36) + Math.random().toString(36).substr(2);
+        return Date.now().toString(36) + Math.random().toString(36).substring(2);
     }
 
     private updateMessageCount(): void {
@@ -427,23 +432,22 @@ class SaveConnectionModal extends Modal {
         const { contentEl } = this;
         contentEl.empty();
 
-        contentEl.createEl('h2', { text: 'Save Connection' });
+        contentEl.createEl('h2', { text: 'Save connection' });
 
         const form = contentEl.createDiv('ws-connection-form');
 
         // URL display (read-only)
         const urlGroup = form.createDiv('ws-form-group');
         urlGroup.createEl('label', { text: 'URL' });
-        const urlDisplay = urlGroup.createEl('input', { type: 'text' });
+        const urlDisplay = urlGroup.createEl('input', { type: 'text', cls: 'ws-muted' });
         urlDisplay.value = this.url;
         urlDisplay.disabled = true;
-        urlDisplay.style.opacity = '0.7';
 
         // Name field
         const nameGroup = form.createDiv('ws-form-group');
         nameGroup.createEl('label', { text: 'Name' });
         this.nameInput = nameGroup.createEl('input', { type: 'text' });
-        this.nameInput.placeholder = 'My WebSocket Server';
+        this.nameInput.placeholder = 'My websocket server';
         this.nameInput.focus();
 
         // Handle Enter key
